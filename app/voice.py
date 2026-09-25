@@ -1,6 +1,11 @@
-def generate_voice(text, voice="Friendly Narrator", language="English"):
+def generate_voice(
+    text,
+    voice="Friendly Narrator",
+    language="English"
+):
     """
     Generate voice audio for the cartoon.
+
     AI voice generation will be connected later.
     """
 

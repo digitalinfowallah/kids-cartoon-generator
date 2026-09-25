@@ -7,8 +7,13 @@ def create_characters(story):
         {
             "name": "Main Character",
             "type": "cute cartoon animal",
-            "appearance": "friendly, colorful, child-safe cartoon character",
-            "personality": "happy, curious and kind"
+            "appearance": (
+                "friendly, colorful, "
+                "child-safe cartoon character"
+            ),
+            "personality": (
+                "happy, curious and kind"
+            )
         }
     ]
 

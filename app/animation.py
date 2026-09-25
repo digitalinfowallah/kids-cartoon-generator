@@ -1,4 +1,8 @@
-def generate_animation(scene, characters, style="3D Cartoon"):
+def generate_animation(
+    scene,
+    characters,
+    style="3D Cartoon"
+):
     """
     Generate cartoon animation for one scene.
 

@@ -6,6 +6,7 @@ def create_subtitles(scenes):
     subtitles = []
 
     for scene in scenes:
+
         subtitles.append({
             "scene": scene["scene_number"],
             "text": scene["dialogue"],

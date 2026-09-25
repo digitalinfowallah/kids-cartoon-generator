@@ -1,23 +1,17 @@
-def create_video(scenes, voices):
+def generate_voice(
+    text,
+    voice="Friendly Narrator",
+    language="English"
+):
     """
-    Assemble scenes and voices into the final cartoon video.
+    Generate voice audio for the cartoon.
 
-    Final target:
-    - Vertical 9:16
-    - 2160 x 3840
-    - MP4
+    AI voice generation will be connected later.
     """
-
-    video_settings = {
-        "width": 2160,
-        "height": 3840,
-        "aspect_ratio": "9:16",
-        "format": "mp4",
-        "quality": "4K"
-    }
 
     return {
-        "status": "ready",
-        "settings": video_settings,
-        "file": None
+        "text": text,
+        "voice": voice,
+        "language": language,
+        "audio_file": None
     }

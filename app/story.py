@@ -1,29 +1,15 @@
+import json
 import os
-import requests
+import subprocess
 
 
 def create_story(user_idea, language="English"):
     """
-    Generate a structured kids cartoon story using an AI API.
+    Generate a kids cartoon story.
+
+    Uses a local Ollama model when available.
+    Falls back to a simple story if Ollama is not running.
     """
-
-    api_key = os.getenv("OPENAI_API_KEY")
-
-    # Temporary fallback if API key is not connected yet
-    if not api_key:
-        return {
-            "title": "My Kids Cartoon",
-            "language": language,
-            "idea": user_idea,
-            "scenes": [
-                {
-                    "scene": 1,
-                    "description": user_idea,
-                    "dialogue": "",
-                    "duration": 5
-                }
-            ]
-        }
 
     prompt = f"""
 Create a short, child-friendly cartoon story.
@@ -36,58 +22,111 @@ Language:
 
 Create 5 short scenes.
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON:
 
 {{
-  "title": "story title",
-  "scenes": [
-    {{
-      "scene": 1,
-      "description": "scene description",
-      "dialogue": "spoken dialogue",
-      "duration": 6
-    }}
-  ]
+    "title": "story title",
+    "scenes": [
+        {{
+            "scene": 1,
+            "description": "scene description",
+            "dialogue": "spoken dialogue",
+            "duration": 6
+        }}
+    ]
 }}
 
 Rules:
-- Make it suitable for children.
-- Keep the story positive and educational.
-- Use simple language.
-- Each scene should be visually interesting.
-- No violence or frightening content.
+- Suitable for children.
+- Positive and educational.
+- Simple language.
+- Visually interesting.
+- No violence.
+- No frightening content.
 """
 
-    response = requests.post(
-        "https://api.openai.com/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "model": "gpt-4o-mini",
-            "messages": [
-                {
-                    "role": "user",
-                    "content": prompt
-                }
+    try:
+        result = subprocess.run(
+            [
+                "ollama",
+                "run",
+                "llama3.2:3b",
+                prompt
             ],
-            "temperature": 0.7
-        },
-        timeout=60
-    )
+            capture_output=True,
+            text=True,
+            timeout=120
+        )
 
-    response.raise_for_status()
+        if result.returncode == 0:
+            content = result.stdout.strip()
 
-    data = response.json()
+            story = json.loads(content)
 
-    content = data["choices"][0]["message"]["content"]
+            story["language"] = language
+            story["idea"] = user_idea
 
-    import json
+            return story
 
-    story = json.loads(content)
+    except Exception:
+        pass
 
-    story["language"] = language
-    story["idea"] = user_idea
 
-    return story
+    # Free fallback
+    return {
+        "title": "My Kids Cartoon",
+        "language": language,
+        "idea": user_idea,
+        "scenes": [
+            {
+                "scene": 1,
+                "description": user_idea,
+                "dialogue": (
+                    "Let's go on a wonderful adventure!"
+                ),
+                "duration": 6
+            },
+            {
+                "scene": 2,
+                "description": (
+                    "The main character discovers "
+                    "something interesting."
+                ),
+                "dialogue": (
+                    "Wow! Look what I found!"
+                ),
+                "duration": 6
+            },
+            {
+                "scene": 3,
+                "description": (
+                    "The character learns an important lesson."
+                ),
+                "dialogue": (
+                    "Now I understand!"
+                ),
+                "duration": 6
+            },
+            {
+                "scene": 4,
+                "description": (
+                    "The character shares the lesson "
+                    "with friends."
+                ),
+                "dialogue": (
+                    "We can all help each other!"
+                ),
+                "duration": 6
+            },
+            {
+                "scene": 5,
+                "description": (
+                    "Everyone celebrates together."
+                ),
+                "dialogue": (
+                    "What a wonderful day!"
+                ),
+                "duration": 6
+            }
+        ]
+    }

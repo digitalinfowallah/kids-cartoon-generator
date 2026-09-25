@@ -1,0 +1,13 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+output/*
+!output/.gitkeep
+
+assets/characters/*
+assets/backgrounds/*
+assets/music/*
+assets/sounds/*

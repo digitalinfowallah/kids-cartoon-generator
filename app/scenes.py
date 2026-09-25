@@ -6,6 +6,7 @@ def create_scenes(story, characters):
     scenes = []
 
     for scene in story.get("scenes", []):
+
         scenes.append({
             "scene_number": scene["scene"],
             "description": scene["description"],

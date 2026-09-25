@@ -6,6 +6,12 @@ from scenes import create_scenes
 from voice import generate_voice
 from video import create_video
 
+from animation import generate_animation
+from music import generate_music
+from effects import generate_sound_effects
+from subtitles import create_subtitles
+from renderer import render_video
+
 
 st.set_page_config(
     page_title="AI Kids Cartoon Maker",
@@ -23,7 +29,10 @@ st.write(
 
 story_idea = st.text_area(
     "📝 Enter your story",
-    placeholder="Example: A little rabbit learns to share his toys with his friends.",
+    placeholder=(
+        "Example: A little rabbit learns to share "
+        "his toys with his friends."
+    ),
     height=150
 )
 
@@ -67,35 +76,59 @@ if st.button(
     else:
 
         progress = st.progress(0)
-
         status = st.empty()
-
 
         # Step 1: Create story
         status.write("📝 Creating story...")
+
         story = create_story(
             story_idea,
             language
         )
-        progress.progress(20)
+
+        progress.progress(10)
 
 
         # Step 2: Create characters
         status.write("🐰 Creating cartoon characters...")
-        characters = create_characters(story)
-        progress.progress(40)
+
+        characters = create_characters(
+            story
+        )
+
+        progress.progress(20)
 
 
         # Step 3: Create scenes
         status.write("🎬 Creating scenes...")
+
         scenes = create_scenes(
             story,
             characters
         )
-        progress.progress(55)
+
+        progress.progress(30)
 
 
-        # Step 4: Generate voice
+        # Step 4: Generate animation
+        status.write("🎞️ Creating cartoon animation...")
+
+        animations = []
+
+        for scene in scenes:
+
+            animation = generate_animation(
+                scene,
+                characters,
+                style
+            )
+
+            animations.append(animation)
+
+        progress.progress(45)
+
+
+        # Step 5: Generate voices
         status.write("🎙️ Preparing character voices...")
 
         voices = []
@@ -110,12 +143,63 @@ if st.button(
 
             voices.append(voice_data)
 
-        progress.progress(70)
+        progress.progress(55)
 
 
-        # Step 5: Create video
-        status.write("🎞️ Preparing 9:16 4K video...")
+        # Step 6: Generate music
+        status.write("🎵 Preparing background music...")
 
+        music = generate_music(
+            style
+        )
+
+        progress.progress(65)
+
+
+        # Step 7: Generate sound effects
+        status.write("🔊 Preparing sound effects...")
+
+        effects = []
+
+        for scene in scenes:
+
+            sound_effects = generate_sound_effects(
+                scene
+            )
+
+            effects.append(sound_effects)
+
+        progress.progress(72)
+
+
+        # Step 8: Create subtitles
+        status.write("📝 Creating subtitles...")
+
+        subtitles = create_subtitles(
+            scenes
+        )
+
+        progress.progress(80)
+
+
+        # Step 9: Render final video
+        status.write(
+            "🎞️ Rendering 9:16 4K cartoon video..."
+        )
+
+        final_video = render_video(
+            scenes,
+            animations,
+            voices,
+            music,
+            effects,
+            subtitles
+        )
+
+        progress.progress(95)
+
+
+        # Legacy video settings
         video = create_video(
             scenes,
             voices
@@ -133,21 +217,27 @@ if st.button(
 
         st.write(
             f"Resolution: "
-            f"{video['settings']['width']} × "
-            f"{video['settings']['height']}"
+            f"{final_video['settings']['width']} × "
+            f"{final_video['settings']['height']}"
         )
 
         st.write(
             f"Aspect Ratio: "
-            f"{video['settings']['aspect_ratio']}"
+            f"{final_video['settings']['aspect_ratio']}"
         )
 
         st.write(
             f"Format: "
-            f"{video['settings']['format']}"
+            f"{final_video['settings']['format']}"
         )
 
         st.write(
             f"Quality: "
-            f"{video['settings']['quality']}"
+            f"{final_video['settings']['quality']}"
+        )
+
+        st.info(
+            "The current version contains the complete "
+            "generation pipeline structure. AI generation "
+            "and real video rendering APIs will be connected next."
         )
